@@ -1,6 +1,8 @@
 import Image from "next/image";
 import GridGroup_r from "resources/rightgrid.svg";
 import GridGroup_l from "resources/leftgrid.svg";
+import StyledButton from "components/StyledButton";
+import WindowFrame from "components/window";
 
 const LandingPage = () => {
   return (
@@ -11,22 +13,27 @@ const LandingPage = () => {
       <div className="absolute left-5 hidden lg:flex">
         <Image src={GridGroup_l} alt="Grid_R" />
       </div>
-      <div className="hero min-h-screen bg-base-200">
+      <div className="hero min-h-screen py-28 bg-base-150">
         <div className="hero-content text-center">
           <div className="max-w-full">
-            <h1 className="lg:text-8xl font-bold">Supercharge your</h1>
-            <h1 className="lg:text-8xl font-bold">Productivity</h1>
+            <div className="lg:text-8xl font-bold text-black">
+              Supercharge your
+            </div>
+            <div className="lg:text-8xl font-bold pt-5 bg-gradient-to-b text-transparent bg-clip-text from-prd-grad-from to-prd-grad-to">
+              Productivity.
+            </div>
+            <div className="py-6 lg:text-2xl pt-10 text-black font-medium">
+              Harness the Power of AI to Increase Productivity In Your <br />
+              Workflow with our AI Tools Range!
+            </div>
+
+            <StyledButton />
+            <WindowFrame />
           </div>
         </div>
       </div>
     </main>
   );
 };
-
-{/* <p className="py-6">
-Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-excepturi exercitationem quasi. In deleniti eaque aut repudiandae
-et a id nisi.
-</p> */}
 
 export default LandingPage;

@@ -19,5 +19,19 @@ module.exports = {
     logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
   },
 
+  theme: {
+    extend: {
+      colors: {
+        'prd-grad-from': '#8E54FF',
+        'prd-grad-to': '#331274',
+      },
+      spacing: {
+        '15': '3.75rem',
+        '0.1': '0.1rem',
+        '42': '10.64375rem'
+      }
+    }
+  }
+
   //...
 }
