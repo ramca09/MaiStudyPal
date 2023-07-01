@@ -5,7 +5,7 @@ const StyledButton = () => {
         <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
-              class="w-10 h-10 text-white dark:text-white rounded-none"
+              className="w-10 h-10 text-white dark:text-white rounded-none"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -13,8 +13,8 @@ const StyledButton = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeWidth="2"
                 d="M6 1h10M6 5h10M6 9h10M1.49 1h.01m-.01 4h.01m-.01 4h.01"
               />
             </svg>
@@ -22,7 +22,7 @@ const StyledButton = () => {
               Summarizer Tool
             </h2>
             <svg
-              class="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
+              className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -30,9 +30,9 @@ const StyledButton = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
               />
             </svg>
@@ -41,7 +41,7 @@ const StyledButton = () => {
         <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
-              class="w-10 h-10 text-white dark:text-white rounded-none"
+              className="w-10 h-10 text-white dark:text-white rounded-none"
               viewBox="0 0 40 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -49,16 +49,16 @@ const StyledButton = () => {
               <path
                 d="M18.0952 33.3333H33.3333M29.5238 12.381L31.4285 14.2857M32.3809 7.61905C32.7562 7.99421 33.0539 8.43963 33.257 8.92987C33.4601 9.4201 33.5646 9.94555 33.5646 10.4762C33.5646 11.0068 33.4601 11.5323 33.257 12.0225C33.0539 12.5127 32.7562 12.9582 32.3809 13.3333L14.2857 31.4286L6.66663 33.3333L8.57139 25.821L26.6742 7.62667C27.3878 6.90966 28.3448 6.48717 29.3554 6.44306C30.366 6.39895 31.3562 6.73646 32.1295 7.38857L32.3809 7.61905Z"
                 stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
             <h2 className="card-title text-white justify-center py-3">
               Writing Assistant
             </h2>
             <svg
-              class="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
+              className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -66,9 +66,9 @@ const StyledButton = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
               />
             </svg>
@@ -77,7 +77,7 @@ const StyledButton = () => {
         <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
-              class="w-10 h-10 text-white dark:text-white rounded-none"
+              className="w-10 h-10 text-white dark:text-white rounded-none"
               viewBox="0 0 40 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +92,7 @@ const StyledButton = () => {
               ChatBot
             </h2>
             <svg
-              class="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
+              className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -100,9 +100,9 @@ const StyledButton = () => {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
               />
             </svg>
