@@ -7,7 +7,7 @@ import WindowFrame from "components/window";
 const Part1 = () => {
   return (
     <>
-      <div className="absolute right-0 top-3 hidden lg:flex">
+      <div className="absolute right-0 top-0 hidden lg:flex">
         <Image src={GridGroup_r} alt="Grid_R" />
       </div>
       <div className="absolute left-0 top-0 hidden lg:flex">

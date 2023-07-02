@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const NavBar = () => {
   return (
-    <nav className="navbar bg-base-100 pt-5 shadow">
+    <nav className="navbar bg-base-100 pt-5 shadow fixed top-0 z-50">
       <div className="navbar-center">
         <div className="dropdown lg:pr-24">
           <label tabIndex={0} className="btn btn-ghost md:hidden">
@@ -87,8 +87,8 @@ const NavBar = () => {
       </div>
       <div className="navbar-end"></div>
       <div className="navbar-end gap-2.5 hidden md:flex lg:pr-24">
-        <button className="btn btn-sm border-gray-300 bg-white font-normal normal-case">Sign In</button>
-        <button className="btn btn-sm bg-purple-500 text-white font-normal normal-case ">Sign up for free</button>
+        <button className="btn btn-sm border-gray-300 bg-white font-normal normal-case ">Sign In</button>
+        <button className="btn btn-sm bg-purple-500 text-white font-normal normal-case hover:bg-prd-grad-to">Sign up for free</button>
       </div>
       <div className="navbar-end sm:hidden">
         <summary></summary>
