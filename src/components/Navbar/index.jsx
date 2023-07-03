@@ -88,7 +88,7 @@ const NavBar = () => {
       <div className="navbar-end"></div>
       <div className="navbar-end gap-2.5 hidden md:flex lg:pr-24">
         <button className="btn btn-sm border-gray-300 bg-white font-normal normal-case">Sign In</button>
-        <button className="btn btn-sm bg-purple-500 text-white font-normal normal-case ">Sign up for free</button>
+        <button className="btn btn-sm bg-purple-500 text-white font-normal normal-case hover:bg-purple-900">Sign up for free</button>
       </div>
       <div className="navbar-end sm:hidden">
         <summary></summary>

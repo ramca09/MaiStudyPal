@@ -53,7 +53,7 @@ const Part3 = () => {
                 </div>
                 <Link
                   href=""
-                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-prd-grad-to text-white normal-case"
+                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;
                   <svg
@@ -109,7 +109,7 @@ const Part3 = () => {
                 </div>
                 <Link
                   href=""
-                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-prd-grad-to text-white normal-case"
+                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;
                   <svg
@@ -165,7 +165,7 @@ const Part3 = () => {
                 </div>
                 <Link
                   href=""
-                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-prd-grad-to text-white normal-case"
+                  className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;
                   <svg
