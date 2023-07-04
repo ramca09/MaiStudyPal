@@ -55,9 +55,9 @@ const SignunPage = () => {
                     <br />
                     and agree to our{" "}
                   </span>
-                  <span className="text-black text-[12px] font-normal underline leading-tight">
+                  <Link className="text-black text-[12px] font-normal underline leading-tight" href="/pricvacy">
                     Terms and Conditions.
-                  </span>
+                  </Link>
                 </div>
               </div>
             </div>

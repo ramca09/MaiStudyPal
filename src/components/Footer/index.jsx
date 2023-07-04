@@ -8,7 +8,7 @@ const Footer = () => {
       <footer className="footer p-10 bg-[#1C1D1F] text-[#CAC7C7] flex justify-center">
         <div className="lg:grid lg:grid-rows-1">
           <Image src={footerlogo} alt="Logo" />
-          <div className="space-x-12 lg:grid lg:grid-cols-4 lg:gap-x-20 lg:space-x-0 flex-grow">
+          <div className="space-x-12 lg:grid lg:grid-cols-4 lg:gap-x-20 2xl:gap-x-48 lg:space-x-0 flex-grow place-items-start">
             <div className="mt-6 lg:grid lg:grid-rows-2 lg:gap-x-16">
               <span className="footer-title">MAISTUDYPAL</span>
               <Link href="/about" className="link link-hover">
