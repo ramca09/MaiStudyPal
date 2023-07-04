@@ -1,4 +1,4 @@
-import Header from "components/Navbar";
+import {Navbar as Header} from "components/Navbar";
 import Footer from "components/Footer";
 import paymentlayer from "resources/paymentlayer.svg";
 import Image from "next/image";
