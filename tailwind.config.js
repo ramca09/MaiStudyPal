@@ -24,6 +24,8 @@ module.exports = {
       colors: {
         'prd-grad-from': '#8E54FF',
         'prd-grad-to': '#331274',
+        'prd-sub-grad-from': '#8C52FF',
+        'prd-sub-grad-to': '#1C0D39'
       },
       spacing: {
         '15': '3.75rem',
