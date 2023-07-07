@@ -1,9 +1,9 @@
-import { ToolHeader } from "components/Navbar";
+import { Summarizer } from "components/Tools";
 
 const SummarizerPage = () => {
   return (
     <>
-      <ToolHeader />
+      <Summarizer />
     </>
   );
 };
