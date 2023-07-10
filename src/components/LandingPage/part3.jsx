@@ -8,39 +8,39 @@ import Link from "next/link";
 const Part3 = () => {
   return (
     <div className="hero min-h-screen py-28 bg-base-150 relative mt-52">
-      <div className="absolute left-[7.6rem] -mt-72">
-        <Image src={Logo} alt="Logo" />
-        <svg
-          className="absolute ml-5 -mt-1"
-          width="4"
-          height="367"
-          viewBox="0 0 4 367"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect
-            width="4"
-            height="367"
-            fill="url(#paint0_linear_31_713)"
-            fillOpacity="0.5"
-          />
-          <defs>
-            <linearGradient
-              id="paint0_linear_31_713"
-              x1="2"
-              y1="0"
-              x2="2"
-              y2="367"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="#8C52FF" />
-              <stop offset="1" stopColor="#1A2735" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
       <div className="hero-content">
-        <div className="mt-6 space-x-12 lg:grid lg:grid-rows-3 lg:gap-y-80 lg:space-x-0">
+        <div className="mt-6 space-x-12 lg:grid lg:grid-rows-3 lg:gap-y-80 lg:space-x-0 relative">
+          <div className="absolute -left-20 top-8">
+            <Image src={Logo} alt="Logo" />
+            <svg
+              className="absolute ml-5 -mt-1"
+              width="4"
+              height="367"
+              viewBox="0 0 4 367"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                width="4"
+                height="367"
+                fill="url(#paint0_linear_31_713)"
+                fillOpacity="0.5"
+              />
+              <defs>
+                <linearGradient
+                  id="paint0_linear_31_713"
+                  x1="2"
+                  y1="0"
+                  x2="2"
+                  y2="367"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#8C52FF" />
+                  <stop offset="1" stopColor="#1A2735" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <div className="mt-6 space-y-12 lg:grid lg:grid-cols-2 lg:gap-x-16 lg:space-y-0">
             <div className="group relative">
               <div className="relative rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
@@ -99,6 +99,27 @@ const Part3 = () => {
 
           <div className="mt-6 space-y-12 lg:grid lg:grid-cols-2 lg:gap-x-16 lg:space-y-0">
             <div className="group relative">
+              <div className="relative h-full w-full rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
+                <Image
+                  className="absolute -top-7"
+                  src={Backboardframe}
+                  alt="Back Board Frame"
+                />
+                <Image
+                  src={WindowFrameSvg}
+                  className="absolute top-0 left-11 pr-[5rem]"
+                  alt="Window Frame"
+                />
+                <Image
+                  className="absolute top-[2.05rem] lg:left-[2.75rem] pr-[4.5rem]"
+                  src={Videoframe}
+                  alt="Video Frame"
+                />
+              </div>
+
+              {/* <div className="w-[40rem] h-[40rem] absolute rounded-full bg-gradient-radial from-purple-300 to-white opacity-75 blur-3xl"></div>             */}
+            </div>
+            <div className="group relative">
               <div className="relative rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
                 <div className="text-5xl font-bold">AI Summarizer</div>
                 <div className="pt-6 text-[1.1rem] font-medium">
@@ -129,27 +150,6 @@ const Part3 = () => {
                   </svg>
                 </Link>
               </div>
-            </div>
-            <div className="group relative">
-              <div className="relative h-full w-full rounded-lg bg-white sm:aspect-h-1 sm:aspect-w-2 lg:aspect-h-1 lg:aspect-w-1 sm:h-64">
-                <Image
-                  className="absolute -top-7"
-                  src={Backboardframe}
-                  alt="Back Board Frame"
-                />
-                <Image
-                  src={WindowFrameSvg}
-                  className="absolute top-0 left-11 pr-[5rem]"
-                  alt="Window Frame"
-                />
-                <Image
-                  className="absolute top-[2.05rem] lg:left-[2.75rem] pr-[4.5rem]"
-                  src={Videoframe}
-                  alt="Video Frame"
-                />
-              </div>
-
-              {/* <div className="w-[40rem] h-[40rem] absolute rounded-full bg-gradient-radial from-purple-300 to-white opacity-75 blur-3xl"></div>             */}
             </div>
           </div>
 
