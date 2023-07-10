@@ -52,7 +52,7 @@ const Part3 = () => {
                   the information overload! <br />
                 </div>
                 <Link
-                  href=""
+                  href="/summarizer"
                   className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;
@@ -129,7 +129,7 @@ const Part3 = () => {
                   the information overload! <br />
                 </div>
                 <Link
-                  href=""
+                  href="/wassistant"
                   className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;
@@ -164,7 +164,7 @@ const Part3 = () => {
                   the information overload! <br />
                 </div>
                 <Link
-                  href=""
+                  href="/chatbot"
                   className="absolute left-0 bottom-0 btn bg-prd-grad-from hover:bg-purple-900 text-white normal-case"
                 >
                   Try the Tool&nbsp;

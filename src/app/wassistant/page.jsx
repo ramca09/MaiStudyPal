@@ -1,4 +1,4 @@
-import WritingAssistant from "components/Tools/writingassistant";
+import { WritingAssistant } from "components/Tools";
 
 const WritingAssistantPage = () => {
   return (
