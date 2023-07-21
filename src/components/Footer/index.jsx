@@ -1,8 +1,34 @@
+"use client";
 import Image from "next/image";
 import footerlogo from "resources/footerlogo.svg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [userData, setUserData] = useState();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        const { data: users, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id);
+        if (users) setUserData(users[0]);
+      }
+    };
+    getUserData();
+  }, []);
+
   return (
     <>
       <footer className="footer p-10 bg-[#1C1D1F] text-[#CAC7C7] flex justify-center">
@@ -41,14 +67,24 @@ const Footer = () => {
             </div>
             <div className="mt-6 grid grid-rows-2 lg:gap-x-16 lg:space-y-0">
               <span className="footer-title">SUPERCHARGE PRODUCTIVITY</span>
-              <div className="space-x-5">
-                <button className="btn btn-sm border-gray-300 bg-[#1C1D1F] text-[#CAC7C7] font-normal normal-case hover:bg-gray-800">
-                  Sign In
-                </button>
-                <button className="btn btn-sm bg-purple-500 text-white font-normal normal-case hover:bg-purple-900">
-                  Sign up for free
-                </button>
-              </div>
+              {!userData ? (
+                <div className="space-x-5">
+                  <button
+                    onClick={() => router.push("/signin")}
+                    className="btn btn-sm border-gray-300 bg-[#1C1D1F] text-[#CAC7C7] font-normal normal-case hover:bg-gray-800"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => router.push("/signup")}
+                    className="btn btn-sm bg-purple-500 text-white font-normal normal-case hover:bg-purple-900"
+                  >
+                    Sign up for free
+                  </button>
+                </div>
+              ) : (
+                <div>Current Membership Plan : {userData.plan}</div>
+              )}
             </div>
           </div>
         </div>

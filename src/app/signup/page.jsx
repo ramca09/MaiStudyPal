@@ -1,14 +1,52 @@
+"use client";
 import Image from "next/image";
 import MSP_Logo from "resources/Maistudypal_logo.png";
 import Link from "next/link";
 import GoogleLogo from "resources/google.svg";
 import OutlookLogo from "resources/outlook.svg";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 
 const SignunPage = () => {
+  const emailRef = useRef();
+  const userNameRef = useRef();
+  const pwdRef = useRef();
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [isLoading, setLoading] = useState(false);
+
+  const handleSignUp = async () => {
+    const email = emailRef.current.value;
+    const password = pwdRef.current.value;
+    const username = userNameRef.current.value;
+
+    try {
+      setLoading(true);
+      await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            username: username,
+          },
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        },
+      });
+    } catch (err) {
+      alert(err.error_description || err.message);
+    } finally {
+      setLoading(false);
+      router.push('/verify');
+    }
+  };
+  
   return (
     <>
       <main className="flex justify-center flex-col items-center">
-        <Link href="/"><Image className="mt-20" src={MSP_Logo} alt="Logo"/></Link>
+        <Link href="/">
+          <Image className="mt-20" src={MSP_Logo} alt="Logo" />
+        </Link>
         <div className="mt-14 card w-[34.375rem] h-[42.185rem] mx-auto bg-white shadow-lg text-primary-content">
           <div className="card-body pl-15 flex justify-start items-start">
             <h2 className="card-title text-black text-3xl font-semibold">
@@ -33,29 +71,39 @@ const SignunPage = () => {
                   className="input w-96 h-10 border border-gray-200 text-black"
                   placeholder="Email"
                   type="email"
+                  ref={emailRef}
                 />
                 <input
                   className="mt-2.5 input w-96 h-10 border border-gray-200 text-black"
                   type="text"
                   placeholder="Username"
+                  ref={userNameRef}
                 />
                 <input
                   className="mt-2.5 input w-96 h-10 border border-gray-200 text-black"
                   type="password"
                   placeholder="Password"
+                  ref={pwdRef}
                 />
               </div>
               <div className="mt-8 card-actions flex justify-center items-center">
-                <div className="w-96 h-12 bg-violet-500 rounded-lg border border-neutral-300 gap-2.5 btn normal-case hover:bg-prd-grad-to text-white font-medium">
+                <button
+                  onClick={handleSignUp}
+                  disabled={isLoading}
+                  className="w-96 h-12 bg-violet-500 rounded-lg border border-neutral-300 gap-2.5 btn normal-case hover:bg-prd-grad-to text-white font-medium"
+                >
                   Sign Up
-                </div>
+                </button>
                 <div>
                   <span className="text-black text-[12px] font-normal leading-tight">
                     By proceeding you acknowledge that you have read, understood{" "}
                     <br />
                     and agree to our{" "}
                   </span>
-                  <Link className="text-black text-[12px] font-normal underline leading-tight" href="/pricvacy">
+                  <Link
+                    className="text-black text-[12px] font-normal underline leading-tight"
+                    href="/pricvacy"
+                  >
                     Terms and Conditions.
                   </Link>
                 </div>
