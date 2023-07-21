@@ -40,6 +40,7 @@ const SigninPage = () => {
       provider: "google",
       options: {
         scopes: ["email", "profile"],
+        emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
     console.log(error);
