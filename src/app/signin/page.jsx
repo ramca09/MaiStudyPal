@@ -7,14 +7,13 @@ import OutlookLogo from "resources/outlook.svg";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
-import { useSnackbar } from "notistack";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 const SigninPage = () => {
   const router = useRouter();
   const supabase = createClientComponentClient();
   const emailRef = useRef();
   const pwdRef = useRef();
-  const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setLoading] = useState(false);
 
   const handleSignin = async () => {
@@ -24,11 +23,11 @@ const SigninPage = () => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
-      options:{
+      options: {
         emailRedirectTo: `${location.origin}/auth/callback`,
-      }
+      },
     });
-    if (data.user) router.push('/');
+    if (data.user) router.push("/");
     if (error) {
       console.log(error);
       enqueueSnackbar(error.message, { variant: "error" });
@@ -37,17 +36,21 @@ const SigninPage = () => {
   };
 
   const handleGoogleSignin = async () => {
-    const {data, error} = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
       options: {
-        scopes: ['email', 'profile']
-      }
-    })
+        scopes: ["email", "profile"],
+      },
+    });
     console.log(error);
-  }
+  };
 
   return (
     <>
+      <SnackbarProvider
+        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        autoHideDuration={3000}
+      />
       <main className="flex justify-center flex-col items-center">
         <Link href="/">
           <Image className="mt-20" src={MSP_Logo} alt="Logo" />
@@ -62,7 +65,10 @@ const SigninPage = () => {
             </div>
             <div>
               <div className="card-actions mt-10 flex items-center justify-center">
-                <div onClick={handleGoogleSignin} className="btn normal-case w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
+                <div
+                  onClick={handleGoogleSignin}
+                  className="btn normal-case w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center"
+                >
                   <Image src={GoogleLogo} alt="Google" />
                   <span className="text-black pl-4">Sign In with Google</span>
                 </div>
