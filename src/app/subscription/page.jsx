@@ -1,9 +1,17 @@
+'use client';
 import {Navbar as Header} from "components/Navbar";
 import Footer from "components/Footer";
 import paymentlayer from "resources/paymentlayer.svg";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 const SubscriptionPage = () => {
+  const { push } = useRouter();
+
+  const handleClickFree = () => {
+    push('/');
+  }
+
   return (
     <>
       <Header />
@@ -127,7 +135,7 @@ const SubscriptionPage = () => {
                     </div>
 
                     <div className="card-actions mb-14 justify-center">
-                      <button className="btn normal-case w-64 justify-center border-gray-400">
+                      <button className="btn normal-case w-64 justify-center border-gray-400" onClick={() => handleClickFree()}>
                         Get Started
                       </button>
                     </div>

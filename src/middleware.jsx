@@ -19,6 +19,12 @@ export async function middleware(req) {
     console.log("unauthorized");
     return NextResponse.redirect(new URL("/signin", req.url));
   }
+
+  if (user && !user.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  {
+    console.log("not paid");
+    return NextResponse.redirect(new URL('/subscription', req.url));
+  }
   
   return res;
 }
