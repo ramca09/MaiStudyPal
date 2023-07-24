@@ -1,9 +1,40 @@
+'use client';
 import Image from "next/image";
 import MSP_Logo from "resources/footerlogo.svg";
 import Navshowhide from "resources/navshowhide.svg";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
 
 const ToolHeader = (props) => {
+  const router = useRouter();
+  const [userData, setUserData] = useState();
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        const { data: users, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", session.user.id);
+        if (users) setUserData(users[0]);
+      }
+    };
+    getUserData();
+  }, []);
+
+  const onLogout = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  }
+
   return (
     <>
       <nav className="navbar pt-5 shadow top-0 bg-[#513192] text-white flex justify-end">
@@ -186,7 +217,7 @@ const ToolHeader = (props) => {
               tabIndex={0}
               className="btn btn-ghost rounded-btn normal-case"
             >
-              John Smith
+              {userData?.username}
               <svg
                 width="24"
                 height="24"
@@ -208,7 +239,7 @@ const ToolHeader = (props) => {
                 <Link href="#">Item 1</Link>
               </li>
               <li>
-                <Link href="/logout">Log out</Link>
+                <div onClick={onLogout}>Log out</div>
               </li>
             </ul>
           </div>

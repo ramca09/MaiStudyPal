@@ -4,14 +4,37 @@ import MSP_Logo from "resources/footerlogo.svg";
 import Image from "next/image";
 import Navshowhide from "resources/navshowhide.svg";
 import Uploadpdf from "resources/uploadpdf.svg";
+import { useRef } from "react";
+import axios from "axios";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 // import PDFViewer from "./pdfviewer";
 
 const Summarizer = () => {
+  const fileRef = useRef();
+
+  const onFileSelected = async () => {
+    const file = fileRef.current.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    const result = await axios.post("http://localhost:5000/api/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("Result: ", result);
+    if (result.data.state == "success")
+      enqueueSnackbar("Successfully processed!", { variant: "success" });
+    else enqueueSnackbar(result.data.message, { variant: "error" });
+  };
   const onKeyPressed = (e) => {};
 
   return (
     <>
+      <SnackbarProvider
+        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        autoHideDuration={3000}
+      />
       <div className="flex h-screen">
         {/* Sidebar Header */}
         <div className="text-white w-[21.31rem] bg-[#513192] pr-2">
@@ -26,7 +49,10 @@ const Summarizer = () => {
             </div>
           </div>
           {/* upload pdf button */}
-          <button className="btn normal-case ml-10 mt-5 w-4/5 bg-[#513192] text-white hover:bg-prd-grad-from">
+          <label
+            htmlFor="fileInput"
+            className="btn normal-case ml-10 mt-5 w-4/5 bg-[#513192] text-white hover:bg-prd-grad-from"
+          >
             <svg
               width="18"
               height="22"
@@ -69,7 +95,16 @@ const Summarizer = () => {
               />
             </svg>
             Upload New PDF
-          </button>
+            <input
+              id="uploadFile"
+              type="file"
+              hidden
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={onFileSelected}
+              ref={fileRef}
+              accept=".pdf"
+            />
+          </label>
           {/* pdf list */}
           {}
           <div className="mt-7 ml-10">Previous Uploads</div>
@@ -218,7 +253,11 @@ const Summarizer = () => {
                   <input
                     id="fileInput"
                     type="file"
+                    hidden
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    accept=".pdf"
+                    ref={fileRef}
+                    onChange={onFileSelected}
                   />
                 </label>
                 <div className="text-2xl font-bold mt-10">
@@ -266,8 +305,7 @@ const Summarizer = () => {
               <div className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">
                 ✕
               </div>
-              <div className="overflow-scroll">
-              </div>
+              <div className="overflow-scroll"></div>
             </div>
           </main>
         </div>

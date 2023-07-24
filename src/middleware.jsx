@@ -15,7 +15,10 @@ export async function middleware(req) {
   }
 
   if (!user && ['/subscription', '/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  {
+    console.log("unauthorized");
     return NextResponse.redirect(new URL("/signin", req.url));
+  }
   
   return res;
 }

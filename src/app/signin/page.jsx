@@ -43,8 +43,19 @@ const SigninPage = () => {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
-    console.log(error);
   };
+
+  const handleAzureSignin = async () => {
+    async function signInWithAzure() {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          scopes: 'email',
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -73,7 +84,9 @@ const SigninPage = () => {
                   <Image src={GoogleLogo} alt="Google" />
                   <span className="text-black pl-4">Sign In with Google</span>
                 </div>
-                <div className="mt-2.5 normal-case btn w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
+                <div
+                  onClick={handleAzureSignin}
+                  className="mt-2.5 normal-case btn w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
                   <Image src={OutlookLogo} alt="Outlook" />
                   <span className="text-black pl-4">Sign In with Outlook</span>
                 </div>
