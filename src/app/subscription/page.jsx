@@ -27,7 +27,12 @@ const SubscriptionPage = () => {
   }
 
   const handleClickPremium = async () => {
+    axios.post('/api/stripe/session/checkout', {
+      
+    })
+    .then(() => {
 
+    })
   }
 
   return (
