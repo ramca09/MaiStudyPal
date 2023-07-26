@@ -1,6 +1,37 @@
-import Link from "next/link";
+'use client';
+// import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const StyledButton = () => {
+  const supabase = createClientComponentClient()
+  const { push } = useRouter();
+  const MAX_ACCESS_LIMIT = 3;
+
+  const handleUsage = async (link) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { data: { usage, subscription } } = await supabase
+    .from('users')
+    .select(`usage, subscription`)
+    .eq('id', user?.id)
+    .single();
+
+    const { error } = await supabase
+      .from('users')
+      .update({ usage: usage + 1 })
+      .eq('id', user.id);
+
+    if (!error && (usage < MAX_ACCESS_LIMIT || subscription != 'Free')) {
+      push(link);
+    }
+    else {
+      alert('You have reached the maximum access limit of three. ');
+    }
+  }
+
   return (
     <>
       <div className="join gap-12 pt-15">
@@ -23,7 +54,7 @@ const StyledButton = () => {
             <h2 className="card-title text-white justify-center py-3">
               Summarizer Tool
             </h2>
-            <Link href="/summarizer">
+            <div onClick={() => handleUsage('/summarizer')}>
               <svg
                 className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none hover:text-purple-950"
                 aria-hidden="true"
@@ -39,7 +70,7 @@ const StyledButton = () => {
                   d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
                 />
               </svg>
-            </Link>
+            </div>
           </div>
         </div>
         <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
@@ -61,7 +92,7 @@ const StyledButton = () => {
             <h2 className="card-title text-white justify-center py-3">
               Writing Assistant
             </h2>
-            <Link href="/wassistant">
+            <div onClick={() => handleUsage('/wassistant')}>
               <svg
                 className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none hover:text-purple-950"
                 aria-hidden="true"
@@ -77,7 +108,7 @@ const StyledButton = () => {
                   d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
                 />
               </svg>
-            </Link>
+            </div>
           </div>
         </div>
         <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
@@ -97,7 +128,7 @@ const StyledButton = () => {
             <h2 className="card-title text-white justify-center py-3">
               ChatBot
             </h2>
-            <Link href="/chatbot">
+            <div onClick={() => handleUsage('/chatbot')}>
               <svg
                 className="w-5 h-5 absolute right-6 top-3.5 text-white dark:text-white rounded-none hover:text-purple-950"
                 aria-hidden="true"
@@ -113,7 +144,7 @@ const StyledButton = () => {
                   d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
                 />
               </svg>
-            </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -4,12 +4,30 @@ import Footer from "components/Footer";
 import paymentlayer from "resources/paymentlayer.svg";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import axios from 'axios';
 
 const SubscriptionPage = () => {
   const { push } = useRouter();
+  const supabase = createClientComponentClient()
 
-  const handleClickFree = () => {
-    push('/');
+  const handleClickFree = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const { error } = await supabase
+      .from('users')
+      .update({ subscription: 'Free' })
+      .eq('id', user.id)
+
+    if (!error) {
+      push('/');
+    }
+  }
+
+  const handleClickPremium = async () => {
+
   }
 
   return (
@@ -210,7 +228,7 @@ const SubscriptionPage = () => {
                     </div>
 
                     <div className="card-actions mb-14 justify-center">
-                      <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800">
+                      <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickPremium()}>
                         Buy Plus
                       </button>
                     </div>
