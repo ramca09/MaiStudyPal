@@ -118,6 +118,7 @@ const NavBar = () => {
       </div>
       <div className="navbar-end"></div>
       <div className="navbar-end gap-2.5 hidden md:flex lg:pr-24">
+        {console.log("userData: ", userData)}
         {!userData ? (
           <>
             <div

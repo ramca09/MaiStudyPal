@@ -37,10 +37,30 @@ const SignunPage = () => {
       alert(err.error_description || err.message);
     } finally {
       setLoading(false);
-      router.push('/verify');
+      router.push("/verify");
     }
   };
-  
+
+  const handleGoogleSignin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        scopes: ["email", "profile"],
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+  };
+
+  const handleAzureSignin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "azure",
+      options: {
+        scopes: "email",
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+  };
+
   return (
     <>
       <main className="flex justify-center flex-col items-center">
@@ -57,11 +77,11 @@ const SignunPage = () => {
             </div>
             <div>
               <div className="card-actions mt-10 flex items-center justify-center">
-                <div className="btn normal-case w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
+                <div onClick={handleGoogleSignin} className="btn normal-case w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
                   <Image src={GoogleLogo} alt="Google" />
                   <span className="text-black pl-4">Sign Up with Google</span>
                 </div>
-                <div className="mt-2.5 normal-case btn w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
+                <div onClick={handleAzureSignin} className="mt-2.5 normal-case btn w-96 h-10 bg-white hover:border-neutral-600 hover:bg-white rounded-lg border border-neutral-200 flex justify-center items-center">
                   <Image src={OutlookLogo} alt="Outlook" />
                   <span className="text-black pl-4">Sign Up with Outlook</span>
                 </div>
