@@ -26,7 +26,7 @@ export async function middleware(req) {
     .eq('id', user?.id)
     .single()
 
-  if (user && !profile.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
   {
     return NextResponse.redirect(new URL('/subscription', req.url));
   }

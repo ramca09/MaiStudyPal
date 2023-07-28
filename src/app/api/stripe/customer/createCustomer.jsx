@@ -1,4 +1,6 @@
 import Stripe from 'stripe';
+import { NextResponse } from "next/server";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 async function getStripeInstance() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -9,24 +11,23 @@ async function getStripeInstance() {
 }
 
 export default async function createCustomerHandler(req, res) {
-	const {  } =req.body;
-	
-	// NB: here you may want to check that:
-	// - the user can update billing
-	// - the data sent is correct
-	// - the user belongs to the organization in the body
-	// we omit it for simplicity, but food for thought!
+	const { email, name, user } =req.body;
+
+	const stripe = await getStripeInstance();
+	const supabase = createMiddlewareClient();
 	
 	try {
-		const { url } = await createStripeCheckout({
-			returnUrl,
-			organizationId,
-			priceId,
-			customerId,
+		const customer = await stripe.customers.create({
+			email, name
 		});
-	
+
+		const { error } = await supabase
+			.from('users')
+			.update({ customer_id: customer })
+			.eq('id', user.id);
+
 		// redirect user back based on the response
-		res.redirect(301, url);
+		return NextResponse.json({ status: "success", message: 'created' });
 	} catch (e) {
 		console.error(e, `Stripe Checkout error`);
 	
