@@ -23,7 +23,7 @@ const SignunPage = () => {
 
     try {
       setLoading(true);
-      await supabase.auth.signUp({
+      const res = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
@@ -33,6 +33,8 @@ const SignunPage = () => {
           emailRedirectTo: `${location.origin}/auth/callback`,
         },
       });
+      
+      console.log(res)
     } catch (err) {
       alert(err.error_description || err.message);
     } finally {
