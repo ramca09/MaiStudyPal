@@ -19,10 +19,15 @@ export async function middleware(req) {
     console.log("unauthorized");
     return NextResponse.redirect(new URL("/signin", req.url));
   }
+  
+  const { data: profile, error } = await supabase
+    .from('users')
+    .select(`subscription`)
+    .eq('id', user?.id)
+    .single()
 
-  if (user && !user.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  if (user && !profile.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
   {
-    console.log("not paid");
     return NextResponse.redirect(new URL('/subscription', req.url));
   }
   
