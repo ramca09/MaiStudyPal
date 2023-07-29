@@ -1,6 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
 import { NextResponse } from "next/server";
-import { SupabaseClient } from "@supabase/supabase-js";
 
 export async function POST(req, res) {
   if (req.method === "POST") {
