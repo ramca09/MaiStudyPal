@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { NextResponse } from "next/server";
 
 async function getStripeInstance() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -22,22 +23,23 @@ async function createStripeCheckout(params) {
  
   // NB: trimmed for simplicity but use
   // smarter methods for appending the query parameters
-  const successUrl = `${params.returnUrl}?success=true`;
-  const cancelUrl = `${params.returnUrl}?cancel=true`;
- 
+  const successUrl = `${params.returnUrl}/subscription`;
+  const cancelUrl = `${params.returnUrl}/subscription`;
+
   return stripe.checkout.sessions.create({
     mode,
     customer,
     line_items: [lineItem],
     success_url: successUrl,
     cancel_url: cancelUrl,
-    client_reference_id: clientReferenceId,
+    // client_reference_id: clientReferenceId,
   });
 }
 
-export default async function checkoutsSessionHandler(req, res) {
-	const { headers, firebaseUser } = req;
-	const { organizationId, priceId, customerId, returnUrl } =req.body;
+export async function POST(req) {
+  const res = NextResponse.next();
+	const { organizationId, priceId, customerId, returnUrl } = await req.json();
+  console.log(returnUrl)
 	
 	// NB: here you may want to check that:
 	// - the user can update billing
@@ -54,12 +56,12 @@ export default async function checkoutsSessionHandler(req, res) {
 		});
 	
 		// redirect user back based on the response
-		res.redirect(301, url);
+		return NextResponse.json({ status: "success", url });
+		// return res.redirect(303, url);
 	} catch (e) {
 		console.error(e, `Stripe Checkout error`);
-	
 		// either end request or ideally redirect users to the same URL
 		// but using a query parameter such as error=true
-		return res.status(500).end();
+		return NextResponse.json({ status: "failed", message: 'error' });
 	}
 }

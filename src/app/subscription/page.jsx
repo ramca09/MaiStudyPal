@@ -27,13 +27,19 @@ const SubscriptionPage = () => {
   }
 
   const handleClickPremium = async () => {
-    axios.post('/api/stripe/session/checkout', {
-      
-    })
-    .then(() => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    })
+    const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/session`, { 
+      priceId: 'price_1NXcr5BAT8lPXLzYceJo2NLq',
+      organizationId: null,
+      customerId: user.customer_id,
+      returnUrl: process.env.NEXT_PUBLIC_BASE_URL
+    });
+    window.open(data.url)
   }
+
 
   return (
     <>
