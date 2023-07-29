@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
  
 const STRIPE_SIGNATURE_HEADER = 'stripe-signature';
 
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
+// export const config = {
+// 	api: {
+// 		bodyParser: false,
+// 	},
+// };
 
 function buildOrganizationSubscription(
   subscription,
