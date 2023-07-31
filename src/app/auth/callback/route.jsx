@@ -11,5 +11,5 @@ export async function GET(req) {
         await supabase.auth.exchangeCodeForSession(code);
     }
 
-    return NextResponse.redirect(new URL('/signin', req.url));
+    return NextResponse.redirect(new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/signin`, req.url));
 }
