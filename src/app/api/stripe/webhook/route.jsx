@@ -1,13 +1,24 @@
-import getRawBody from 'raw-body';
 import { NextResponse } from "next/server";
- 
+import Stripe from 'stripe';
+import { createClient } from "@supabase/supabase-js";
+
+const StripeWebhooks = {
+  AsyncPaymentSuccess: 'checkout.session.async_payment_succeeded',
+  Completed: 'checkout.session.completed',
+  PaymentFailed: 'checkout.session.async_payment_failed',
+  SubscriptionDeleted: 'customer.subscription.deleted',
+  SubscriptionUpdated: 'customer.subscription.updated',
+}
+
 const STRIPE_SIGNATURE_HEADER = 'stripe-signature';
 
-export const config = {
-	api: {
-		bodyParser: false,
-	},
-};
+async function getStripeInstance() {
+  const key = process.env.STRIPE_SECRET_KEY;
+ 
+  return new Stripe(key, {
+    apiVersion: `2022-11-15`, // update this!
+  });
+}
 
 function buildOrganizationSubscription(
   subscription,
@@ -32,12 +43,20 @@ function buildOrganizationSubscription(
 }
 
 function getOrderStatus(status) {
-	console.log(status)
 	return status
 }
 
-function setOrganizationSubscription(subscriptionData) {
-	console.log(subscriptionData)
+async function setOrganizationSubscription(subscriptionData) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const { error } = await supabase
+      .from('users')
+      .update({ 'subscription': subscriptionData.subscription.id, 'release_date':subscriptionData.subscription.createdAt  })
+      .eq('customer_id', subscriptionData.customerId)
+
 	return subscriptionData;
 }
 
@@ -58,7 +77,7 @@ async function onCheckoutCompleted(
   // use your DB methods to 
   // set organization.subscription=subscriptionData
  
-  return setOrganizationSubscription({
+  return await setOrganizationSubscription({
     organizationId,
     customerId,
     subscription: subscriptionData,
@@ -69,9 +88,28 @@ async function activatePendingSubscription (organizationId) {
 }
 
 async function deleteOrganizationSubscription (subscription_id) {
+	return subscription_id;
 }
 
 async function onSubscriptionUpdated (subscription) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+  console.log(subscription.cancel_at, subscription.customer)
+
+  if (subscription.cancel_at) {
+    const { error } = await supabase
+    .from('users')
+    .update({ 'subscription': null  })
+    .eq('customer_id', subscription.customer)
+  }
+  else {
+    const { error } = await supabase
+    .from('users')
+    .update({ 'subscription': subscription.id, 'release_date': subscription.plan.created  })
+    .eq('customer_id', subscription.customer)
+  }
 }
 
 function onPaymentFailed (session) {
@@ -85,22 +123,22 @@ export async function POST(
   req,
 ) {
   const res = NextResponse.next();
-  const signature = req.headers[STRIPE_SIGNATURE_HEADER];
-  const rawBody = await getRawBody(req);
+  const signature = req.headers.get(STRIPE_SIGNATURE_HEADER);
+  const rawBody = await req.text();
   const stripe = await getStripeInstance();
  
   const event = stripe.webhooks.constructEvent(
     rawBody,
     signature,
-    webhookSecretKey
+    process.env.STRIPE_WEBHOOK_SECRET
   );
-	console.log(event)
-  
+
   // NB: if stripe.webhooks.constructEvent fails, it would throw an error
  
   // here we handle each event based on {event.type}
  
   try {
+    console.log(event.type)
     switch (event.type) {
       case StripeWebhooks.Completed: {
         const session = event.data.object;

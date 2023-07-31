@@ -6,10 +6,30 @@ import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import axios from 'axios';
+import { useState, useEffect } from 'react'
 
 const SubscriptionPage = () => {
   const { push } = useRouter();
   const supabase = createClientComponentClient()
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    async function getProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+  
+      const { data: prof, error } = await supabase
+        .from('users')
+        .select(`subscription,customer_id,release_date`)
+        .eq('id', user?.id)
+        .single()
+
+      setProfile(prof);
+    }
+
+    getProfile();
+  }, [])
 
   const handleClickFree = async () => {
     const {
@@ -27,19 +47,22 @@ const SubscriptionPage = () => {
   }
 
   const handleClickPremium = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/session`, { 
       priceId: 'price_1NXcr5BAT8lPXLzYceJo2NLq',
       organizationId: null,
-      customerId: user.customer_id,
+      customerId: profile.customer_id,
       returnUrl: process.env.NEXT_PUBLIC_BASE_URL
     });
-    window.open(data.url)
+    window.location.href = data.url;
   }
 
+  const handleClickClose = async () => {
+    const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/portal`, { 
+      customerId: profile.customer_id,
+      returnUrl: process.env.NEXT_PUBLIC_BASE_URL + '/subscription'
+    });
+    window.location.href = data.url;
+  }
 
   return (
     <>
@@ -177,7 +200,7 @@ const SubscriptionPage = () => {
                       <div className="card-actions">
                         <div className="grid grid-rows-2 place-items-start">
                           <div className="mt-6 w-40 text-start text-5xl font-extrabold text-white">
-                            $20
+                            $100
                           </div>
                           <div className="text-gray-200 text-md">
                             AUD per month
@@ -239,9 +262,12 @@ const SubscriptionPage = () => {
                     </div>
 
                     <div className="card-actions mb-14 justify-center">
-                      <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickPremium()}>
+                      {!(profile && profile.subscription && profile.subscription != 'Free')&& !profile?.release_date && <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickPremium()}>
                         Buy Plus
-                      </button>
+                      </button>}
+                      {profile && (profile.subscription || profile.release_date) && profile.subscription != 'Free' && <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickClose()}>
+                        {!profile.subscription? 'Resume Subscription': 'Cancel Subscription' }
+                      </button>}
                     </div>
                   </div>
                 </div>
