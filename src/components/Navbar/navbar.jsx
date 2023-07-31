@@ -18,6 +18,8 @@ const NavBar = () => {
         error,
       } = await supabase.auth.getSession();
 
+      console.log("session: ", session);
+
       if (session) {
         const { data: users, error } = await supabase
           .from("users")
