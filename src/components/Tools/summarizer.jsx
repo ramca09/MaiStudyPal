@@ -54,7 +54,7 @@ const Summarizer = ({ uid }) => {
           .from("summarizer")
           .select("*")
           .eq("id", uid);
-        if (data) setMessages(JSON.parse(data[0]?.chat_data));
+        if (data?.length > 0) setMessages(JSON.parse(data[0]?.chat_data));
       }
     };
     getMessage();
@@ -76,7 +76,7 @@ const Summarizer = ({ uid }) => {
     const formData = new FormData();
     formData.append("file", file);
     formData.append('uuid', _uuid_);
-    fetch("http://127.0.0.1:5000/api/upload", {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
       method: "POST",
       body: formData,
     })
@@ -136,7 +136,7 @@ const Summarizer = ({ uid }) => {
       const newObj = { isAI: false, content: prt };
       setMessages([...messages, newObj]);
       const uu = uid ? uid : uuid;
-      fetch("http://127.0.0.1:5000/api/chat", {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -50,18 +50,18 @@ const SubscriptionPage = () => {
     const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/session`, { 
       priceId: 'price_1NXcr5BAT8lPXLzYceJo2NLq',
       organizationId: null,
-      customerId: profile.customer_id,
+      customerId: profile?.customer_id,
       returnUrl: process.env.NEXT_PUBLIC_BASE_URL
     });
-    window.location.href = data.url;
+    // window.location.href = data.url;
   }
 
   const handleClickClose = async () => {
     const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/portal`, { 
-      customerId: profile.customer_id,
+      customerId: profile?.customer_id,
       returnUrl: process.env.NEXT_PUBLIC_BASE_URL + '/subscription'
     });
-    window.location.href = data.url;
+    // window.location.href = data.url;
   }
 
   return (
