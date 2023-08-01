@@ -17,6 +17,7 @@ const ChatBot = ({ uid }) => {
   const [history, setHistory] = useState();
   const [messages, setMessages] = useState([]);
   const [uuid, setUUid] = useState();
+  const [isWaiting, setWaiting] = useState(false);
   const router = useRouter();
   const promptRef = useRef();
 
@@ -40,7 +41,7 @@ const ChatBot = ({ uid }) => {
     const { data, error } = await supabase
       .from("chatbot")
       .update({
-        chat_data: JSON.stringify(result)
+        chat_data: JSON.stringify(result),
       })
       .eq("id", _uuid)
       .select()
@@ -52,12 +53,16 @@ const ChatBot = ({ uid }) => {
   const getResponse = async () => {
     const prt = promptRef.current.value;
     if (prt) {
+      setWaiting(true);
       promptRef.current.value = "";
       const newObj = { isAI: false, content: prt };
       const _uuid_ = uuidv4();
       if (messages.length === 0) {
         if (!uuid) setUUid(_uuid_);
-        setHistory([...history, {isActive: true, id: '', title: prt, gotoLink: null}])
+        setHistory([
+          ...history,
+          { isActive: true, id: "", title: prt, gotoLink: null },
+        ]);
         await supabase.from("chatbot").insert({
           id: _uuid_.toString(),
           user_id: session.user.id,
@@ -80,8 +85,12 @@ const ChatBot = ({ uid }) => {
           setMessages(result);
           if (uid) saveToDB(result, uid);
           else saveToDB(result, _uuid_);
+          setWaiting(false);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setWaiting(false);
+          console.log(err);
+        });
     }
   };
 
@@ -112,7 +121,7 @@ const ChatBot = ({ uid }) => {
   }, []);
 
   const gotoLink = (_uuid_) => {
-    router.push(`${window.origin}/chatbot/${_uuid_}`)
+    router.push(`${window.origin}/chatbot/${_uuid_}`);
   };
 
   return (
@@ -161,15 +170,18 @@ const ChatBot = ({ uid }) => {
           {/* pdf list */}
           <div className="mt-7 ml-10">Previous Chats</div>
           <div className="flex flex-col mt-4 ml-10 space-y-2 justify-start h-fit overflow-y-auto">
-            {history?.slice().reverse().map((value) => (
-              <HistoryItem
-                isActive={value.id === uuid}
-                key={value.id}
-                id={value.id}
-                name={value.title}
-                gotoLink={() => gotoLink(value.id)}
-              />
-            ))}
+            {history
+              ?.slice()
+              .reverse()
+              .map((value) => (
+                <HistoryItem
+                  isActive={value.id === uuid}
+                  key={value.id}
+                  id={value.id}
+                  name={value.title}
+                  gotoLink={() => gotoLink(value.id)}
+                />
+              ))}
           </div>
           {/* bottom nav */}
           <div className="flex justify-center ml-5 absolute bottom-4 flex-col items-start">
@@ -182,7 +194,10 @@ const ChatBot = ({ uid }) => {
             >
               <path d="M0 1H289" stroke="#F4F4F4" strokeWidth="2" />
             </svg>
-            <div onClick={() => router.push('/')} className="mt-4 inline-flex justify-center items-center btn normal-case bg-[#513192] hover:bg-prd-grad-from border-none text-white">
+            <div
+              onClick={() => router.push("/")}
+              className="mt-4 inline-flex justify-center items-center btn normal-case bg-[#513192] hover:bg-prd-grad-from border-none text-white"
+            >
               <svg
                 width="24"
                 height="24"
@@ -197,7 +212,10 @@ const ChatBot = ({ uid }) => {
               </svg>
               <span>Go to Home</span>
             </div>
-            <div onClick={() => router.push('/subscription')} className="mt-4 inline-flex justify-center items-center btn normal-case bg-[#513192] hover:bg-prd-grad-from border-none text-white">
+            <div
+              onClick={() => router.push("/subscription")}
+              className="mt-4 inline-flex justify-center items-center btn normal-case bg-[#513192] hover:bg-prd-grad-from border-none text-white"
+            >
               <svg
                 width="24"
                 height="24"
@@ -245,8 +263,48 @@ const ChatBot = ({ uid }) => {
               ) : (
                 <div className="w-full h-[75vh] overflow-y-auto">
                   {messages.map((value) => (
-                    <ChatbotItem key={Math.random()} isAI={value.isAI} content={value.content} />
+                    <ChatbotItem
+                      key={Math.random()}
+                      isAI={value.isAI}
+                      content={value.content}
+                    />
                   ))}
+                  {isWaiting ? (
+                    <div className="chat chat-end">
+                      <div className="chat-image avatar">
+                        <div className="w-10 rounded-full">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            className="ml-2 mt-2"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z"
+                              stroke="black"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M4.27148 18.346C4.27148 18.346 6.50048 15.5 12.0005 15.5C17.5005 15.5 19.7305 18.346 19.7305 18.346M12.0005 12C12.7961 12 13.5592 11.6839 14.1218 11.1213C14.6844 10.5587 15.0005 9.79565 15.0005 9C15.0005 8.20435 14.6844 7.44129 14.1218 6.87868C13.5592 6.31607 12.7961 6 12.0005 6C11.2048 6 10.4418 6.31607 9.87916 6.87868C9.31655 7.44129 9.00048 8.20435 9.00048 9C9.00048 9.79565 9.31655 10.5587 9.87916 11.1213C10.4418 11.6839 11.2048 12 12.0005 12Z"
+                              stroke="black"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="chat-bubble bg-base-100 text-black shadow whitespace-pre-line">
+                        <span className="loading loading-dots loading-md"></span>
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               )}
 

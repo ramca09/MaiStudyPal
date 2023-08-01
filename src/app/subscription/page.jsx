@@ -1,16 +1,16 @@
-'use client';
-import {Navbar as Header} from "components/Navbar";
+"use client";
+import { Navbar as Header } from "components/Navbar";
 import Footer from "components/Footer";
 import paymentlayer from "resources/paymentlayer.svg";
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import axios from 'axios';
-import { useState, useEffect } from 'react'
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 const SubscriptionPage = () => {
-  const { push } = useRouter();
-  const supabase = createClientComponentClient()
+  const router = useRouter();
+  const supabase = createClientComponentClient();
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
@@ -18,18 +18,18 @@ const SubscriptionPage = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-  
+
       const { data: prof, error } = await supabase
-        .from('users')
+        .from("users")
         .select(`subscription,customer_id,release_date`)
-        .eq('id', user?.id)
-        .single()
+        .eq("id", user?.id)
+        .single();
 
       setProfile(prof);
     }
 
     getProfile();
-  }, [])
+  }, []);
 
   const handleClickFree = async () => {
     const {
@@ -37,32 +37,40 @@ const SubscriptionPage = () => {
     } = await supabase.auth.getUser();
 
     const { error } = await supabase
-      .from('users')
-      .update({ subscription: 'Free' })
-      .eq('id', user.id)
+      .from("users")
+      .update({ subscription: "Free" })
+      .eq("id", user.id);
 
     if (!error) {
-      push('/');
+      router.push("/");
     }
-  }
+  };
 
   const handleClickPremium = async () => {
-    const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/session`, { 
-      priceId: 'price_1NXcr5BAT8lPXLzYceJo2NLq',
-      organizationId: null,
-      customerId: profile?.customer_id,
-      returnUrl: process.env.NEXT_PUBLIC_BASE_URL
-    });
+    const { data, status } = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/session`,
+      {
+        priceId: "price_1NXcr5BAT8lPXLzYceJo2NLq",
+        organizationId: null,
+        customerId: profile?.customer_id,
+        returnUrl: process.env.NEXT_PUBLIC_BASE_URL,
+      }
+    );
+    router.push(data.url);
     // window.location.href = data.url;
-  }
+  };
 
   const handleClickClose = async () => {
-    const { data, status } = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/portal`, { 
-      customerId: profile?.customer_id,
-      returnUrl: process.env.NEXT_PUBLIC_BASE_URL + '/subscription'
-    });
+    const { data, status } = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/portal`,
+      {
+        customerId: profile?.customer_id,
+        returnUrl: process.env.NEXT_PUBLIC_BASE_URL + "/subscription",
+      }
+    );
+    router.push(data.url);
     // window.location.href = data.url;
-  }
+  };
 
   return (
     <>
@@ -187,7 +195,10 @@ const SubscriptionPage = () => {
                     </div>
 
                     <div className="card-actions mb-14 justify-center">
-                      <button className="btn normal-case w-64 justify-center border-gray-400" onClick={() => handleClickFree()}>
+                      <button
+                        className="btn normal-case w-64 justify-center border-gray-400"
+                        onClick={() => handleClickFree()}
+                      >
                         Get Started
                       </button>
                     </div>
@@ -262,12 +273,31 @@ const SubscriptionPage = () => {
                     </div>
 
                     <div className="card-actions mb-14 justify-center">
-                      {!(profile && profile.subscription && profile.subscription != 'Free')&& !profile?.release_date && <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickPremium()}>
-                        Buy Plus
-                      </button>}
-                      {profile && (profile.subscription || profile.release_date) && profile.subscription != 'Free' && <button className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800" onClick={() => handleClickClose()}>
-                        {!profile.subscription? 'Resume Subscription': 'Cancel Subscription' }
-                      </button>}
+                      {!(
+                        profile &&
+                        profile.subscription &&
+                        profile.subscription != "Free"
+                      ) &&
+                        !profile?.release_date && (
+                          <button
+                            className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800"
+                            onClick={() => handleClickPremium()}
+                          >
+                            Buy Plus
+                          </button>
+                        )}
+                      {profile &&
+                        (profile.subscription || profile.release_date) &&
+                        profile.subscription != "Free" && (
+                          <button
+                            className="btn normal-case w-64 justify-center text-white border-gray-400 bg-prd-grad-from hover:bg-purple-800"
+                            onClick={() => handleClickClose()}
+                          >
+                            {!profile.subscription
+                              ? "Resume Subscription"
+                              : "Cancel Subscription"}
+                          </button>
+                        )}
                     </div>
                   </div>
                 </div>

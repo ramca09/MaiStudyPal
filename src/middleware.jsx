@@ -35,10 +35,10 @@ export async function middleware(req) {
     .eq('id', user?.id)
     .single()
 
-  if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
-  {
-    return NextResponse.redirect(new URL('/subscription', req.url));
-  }
+  // if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  // {
+  //   return NextResponse.redirect(new URL('/subscription', req.url));
+  // }
 
   // create customer in stripe 
   if (profile && !profile?.customer_id) {
@@ -61,7 +61,6 @@ export const config = {
   matcher: ["/:path*"],
   runtime: 'experimental-edge', // for Edge API Routes only
   unstable_allowDynamic: [
-    // '/lib/utilities.js', // allows a single file
     '/node_modules/function-bind/**', // use a glob to allow anything in the function-bind 3rd party module
   ],
 };

@@ -23,8 +23,8 @@ async function createStripeCheckout(params) {
  
   // NB: trimmed for simplicity but use
   // smarter methods for appending the query parameters
-  const successUrl = `${params.returnUrl}/subscription`;
-  const cancelUrl = `${params.returnUrl}/subscription`;
+  const successUrl = `${params.returnUrl}`;
+  const cancelUrl = `${params.returnUrl}`;
   console.log('customer', customer)
 
   return stripe.checkout.sessions.create({

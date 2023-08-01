@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import ChatItem from "components/Items/ChatItem";
 import { useRouter } from "next/navigation";
 import HistoryItem from "components/Items/HistoryItem";
-// import PDFViewer from "./pdfviewer";
+import PdfViewer from "./pdfviewer";
 
 const getData = async () => {
   const supabase = createClientComponentClient();
@@ -36,6 +36,10 @@ const Summarizer = ({ uid }) => {
   const [messages, setMessages] = useState([]);
   const [uuid, setUUid] = useState();
   const [showhide, setShowhide] = useState(false);
+  const [isWaiting, setWaiting] = useState(false);
+  const [referenceData, setReferenceData] = useState();
+  const [isReference, setReference] = useState(false);
+  const [pdf, setPdf] = useState(null);
   const fileRef = useRef();
   const newFileRef = useRef();
   const promptRef = useRef();
@@ -55,10 +59,19 @@ const Summarizer = ({ uid }) => {
           .select("*")
           .eq("id", uid);
         if (data?.length > 0) setMessages(JSON.parse(data[0]?.chat_data));
+        const { data: pdfUrl } = supabase.storage
+          .from(`docs`)
+          .getPublicUrl(`${data[0]?.user_id}/pdf/${data[0]?.pdf_name}`);
+        if (pdfUrl) setPdf(pdfUrl.publicUrl);
       }
     };
     getMessage();
   }, []);
+
+  const handleRefSelect = (value) => {
+    setReferenceData(value);
+    setReference(true);
+  };
 
   const uploadPdftoSup = async (userId, file) => {
     return await supabase.storage
@@ -71,11 +84,12 @@ const Summarizer = ({ uid }) => {
 
   const fileProcessing = async (file) => {
     setOnProcessing(true);
-    await uploadPdftoSup(session?.user.id, file);
+    const { data, error } = await uploadPdftoSup(session?.user.id, file);
+    console.log("upload log: ", data);
     const _uuid_ = uuidv4();
     const formData = new FormData();
     formData.append("file", file);
-    formData.append('uuid', _uuid_);
+    formData.append("uuid", _uuid_);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
       method: "POST",
       body: formData,
@@ -83,37 +97,44 @@ const Summarizer = ({ uid }) => {
       .then((res) => res.json())
       .then(async (data) => {
         setOnProcessing(false);
-        const result =
-          `Hey there, \n\nYou uploaded a document named ${file.name}. Following is the summary of the PDF:\n` +
-          data.answer;
-        setMessages([{ isAI: true, content: result }]);
-        setUUid(_uuid_);
-        await supabase.from("summarizer").insert({
-          id: _uuid_.toString(),
-          summary_result: data.answer,
-          chat_data: JSON.stringify([{ isAI: true, content: result }]),
-          pdf_name: file.name,
-          user_id: session.user.id,
-        });
-        enqueueSnackbar("Successfully Processed!", { variant: "success" });
-        router.push(`/summarizer/${_uuid_}`);
+        if (data.state === "success") {
+          const result =
+            `Hey there, \n\nYou uploaded a document named ${file.name}. Following is the summary of the PDF:\n` +
+            data.answer;
+          // setMessages([{ isAI: true, content: result }]);
+          // setUUid(_uuid_);
+          await supabase.from("summarizer").insert({
+            id: _uuid_.toString(),
+            summary_result: data.answer,
+            chat_data: JSON.stringify([{ isAI: true, content: result }]),
+            pdf_name: file.name,
+            user_id: session.user.id,
+          });
+          enqueueSnackbar("Successfully Processed!", { variant: "success" });
+          router.push(`/summarizer/${_uuid_}`);
+        } else
+          enqueueSnackbar("There was an error while processing the document!", {
+            variant: "error",
+          });
       })
       .catch((err) => {
         setOnProcessing(false);
         enqueueSnackbar(err, { variant: "error" });
       });
-  }
+  };
 
   const onNewFileSelected = async () => {
     const file = newFileRef.current?.files[0];
     if (!file) return;
     fileProcessing(file);
-  }
+    newFileRef.current.value = null;
+  };
 
   const onFileSelected = async () => {
     const file = fileRef.current?.files[0];
     if (!file) return;
     fileProcessing(file);
+    newFileRef.current.value = null;
   };
 
   const saveToDB = async (result) => {
@@ -132,6 +153,7 @@ const Summarizer = ({ uid }) => {
   const getAnswer = () => {
     const prt = promptRef.current.value;
     if (prt) {
+      setWaiting(true);
       promptRef.current.value = "";
       const newObj = { isAI: false, content: prt };
       setMessages([...messages, newObj]);
@@ -145,12 +167,24 @@ const Summarizer = ({ uid }) => {
       })
         .then((res) => res.json())
         .then((data) => {
-          const answer = { isAI: true, content: data.answer };
-          const result = [...messages, newObj, answer];
-          setMessages(result);
-          saveToDB(result);
+          console.log(data);
+          if (data.state === "success") {
+            const answer = {
+              isAI: true,
+              content: data.answer,
+              metadata: data.metadata,
+            };
+            const result = [...messages, newObj, answer];
+            setMessages(result);
+            saveToDB(result);
+            setWaiting(false);
+          } else enqueueSnackbar("An error occured!", { variant: "error" });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setWaiting(false);
+          enqueueSnackbar("An error occured!", { variant: "error" });
+        });
     }
   };
 
@@ -164,7 +198,7 @@ const Summarizer = ({ uid }) => {
     getAnswer();
   };
   const gotoLink = (_uuid_) => {
-    router.push(`${window.origin}/summarizer/${_uuid_}`)
+    router.push(`${window.origin}/summarizer/${_uuid_}`);
   };
 
   const showHide = () => {
@@ -257,15 +291,18 @@ const Summarizer = ({ uid }) => {
             {/* pdf list */}
             <div className="mt-7 ml-10">Previous Uploads</div>
             <div className="flex flex-col mt-4 ml-10 space-y-2 justify-start h-fit overflow-y-auto">
-              {history?.slice().reverse().map((value) => (
-                <HistoryItem
-                  isActive={value.id === uuid}
-                  key={value.id}
-                  id={value.id}
-                  name={value.pdf_name}
-                  gotoLink={() => gotoLink(value.id)}
-                />
-              ))}
+              {history
+                ?.slice()
+                .reverse()
+                .map((value) => (
+                  <HistoryItem
+                    isActive={value.id === uuid}
+                    key={value.id}
+                    id={value.id}
+                    name={value.pdf_name}
+                    gotoLink={() => gotoLink(value.id)}
+                  />
+                ))}
             </div>
             {/* bottom nav */}
             <div className="flex justify-center ml-5 absolute bottom-4 flex-col items-start">
@@ -330,7 +367,7 @@ const Summarizer = ({ uid }) => {
             {/* <!-- Main Content Area --> */}
             <main className="flex bg-gray-100 flex-1">
               {/* main content */}
-              <div className="w-3/4 flex-1 bg-gray-100 p-6 relative flex flex-col">
+              <div className="w-2/3 flex-1 bg-gray-100 p-6 relative flex flex-col">
                 {/* <!-- Main content goes here --> */}
                 {messages.length < 1 ? (
                   <div className="w-full h-full flex justify-center items-center">
@@ -365,8 +402,23 @@ const Summarizer = ({ uid }) => {
                 ) : (
                   <div className="w-full h-[75vh] overflow-y-auto">
                     {messages?.map((value) => (
-                      <ChatItem key={Math.random()} isAI={value.isAI} content={value.content} />
+                      <ChatItem
+                        key={Math.random()}
+                        isAI={value.isAI}
+                        content={value.content}
+                        metadata={value?.metadata}
+                        handleSelect={handleRefSelect}
+                      />
                     ))}
+                    {isWaiting ? (
+                      <div className="chat chat-start">
+                        <div className="chat-bubble bg-base-100 text-black shadow whitespace-pre-line">
+                          <span className="loading loading-dots loading-md"></span>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 )}
 
@@ -406,13 +458,19 @@ const Summarizer = ({ uid }) => {
               </div>
               {/* pdf viewer */}
               <div
-                className="w-1/4 sidebar-shadow h-full border-none relative"
-                hidden={false}
+                className="w-1/3 sidebar-shadow h-full border-none relative"
+                hidden={!isReference}
               >
-                <div className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2">
+                <div
+                  className="absolute btn btn-sm btn-circle btn-ghost right-2 top-2 hover:cursor-pointer"
+                  onClick={() => setReference(false)}
+                >
                   ✕
                 </div>
-                <div className="overflow-scroll"></div>
+                <div className="overflow-scroll flex flex-col justify-center items-center">
+                  {console.log("selected pdf: ", referenceData)}
+                  {pdf ? <PdfViewer pdfData={pdf} page={referenceData} /> : "Empty!"}
+                </div>
               </div>
             </main>
           </div>
