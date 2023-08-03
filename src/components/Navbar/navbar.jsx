@@ -10,6 +10,7 @@ const NavBar = () => {
   const router = useRouter();
   const [userData, setUserData] = useState();
   const supabase = createClientComponentClient();
+  const [sessionData, setSessionData] = useState();
 
   useEffect(() => {
     const getUserData = async () => {
@@ -18,13 +19,13 @@ const NavBar = () => {
         error,
       } = await supabase.auth.getSession();
 
-      console.log("session: ", session);
-
       if (session) {
+        setSessionData(session);
         const { data: users, error } = await supabase
           .from("users")
           .select("*")
           .eq("id", session.user.id);
+        console.log(users);
         if (users) setUserData(users[0]);
       }
     };
@@ -120,7 +121,6 @@ const NavBar = () => {
       </div>
       <div className="navbar-end"></div>
       <div className="navbar-end gap-2.5 hidden md:flex lg:pr-24">
-        {console.log("userData: ", userData)}
         {!userData ? (
           <>
             <div
@@ -142,7 +142,7 @@ const NavBar = () => {
               tabIndex={0}
               className="btn btn-ghost rounded-btn normal-case"
             >
-              {userData.username}
+              {userData.username ? userData.username : sessionData.user.app_metadata.provider === 'google' ? sessionData.user.user_metadata.full_name : ""}
               <svg
                 width="24"
                 height="24"

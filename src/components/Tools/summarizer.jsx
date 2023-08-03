@@ -84,12 +84,17 @@ const Summarizer = ({ uid }) => {
 
   const fileProcessing = async (file) => {
     setOnProcessing(true);
-    const { data, error } = await uploadPdftoSup(session?.user.id, file);
-    console.log("upload log: ", data);
+    await uploadPdftoSup(session?.user.id, file);
+    const {
+      data: { publicUrl },
+    } = supabase.storage
+      .from(`docs`)
+      .getPublicUrl(`${session.user.id}/pdf/${file.name}`);
     const _uuid_ = uuidv4();
     const formData = new FormData();
     formData.append("file", file);
     formData.append("uuid", _uuid_);
+    formData.append("path", publicUrl);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
       method: "POST",
       body: formData,
@@ -468,8 +473,11 @@ const Summarizer = ({ uid }) => {
                   ✕
                 </div>
                 <div className="overflow-scroll flex flex-col justify-center items-center">
-                  {console.log("selected pdf: ", referenceData)}
-                  {pdf ? <PdfViewer pdfData={pdf} page={referenceData} /> : "Empty!"}
+                  {pdf ? (
+                    <PdfViewer pdfData={pdf} page={referenceData} />
+                  ) : (
+                    "Empty!"
+                  )}
                 </div>
               </div>
             </main>

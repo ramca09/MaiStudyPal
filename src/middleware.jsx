@@ -35,10 +35,10 @@ export async function middleware(req) {
     .eq('id', user?.id)
     .single()
 
-  // if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
-  // {
-  //   return NextResponse.redirect(new URL('/subscription', req.url));
-  // }
+  if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  {
+    return NextResponse.redirect(new URL('/subscription', req.url));
+  }
 
   // create customer in stripe 
   if (profile && !profile?.customer_id) {
