@@ -35,7 +35,7 @@ const StyledButton = () => {
   return (
     <>
       <div className="join gap-12 pt-15">
-        <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
+        <div className="card w-[280px] h-[152px] hover:cursor-pointer bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
               className="w-10 h-10 text-white dark:text-white rounded-none"
@@ -73,7 +73,7 @@ const StyledButton = () => {
             </div>
           </div>
         </div>
-        <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
+        <div className="card w-[280px] h-[152px] hover:cursor-pointer bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
               className="w-10 h-10 text-white dark:text-white rounded-none"
@@ -111,7 +111,7 @@ const StyledButton = () => {
             </div>
           </div>
         </div>
-        <div className="card w-[280px] h-[152px] bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
+        <div className="card w-[280px] h-[152px] hover:cursor-pointer bg-gradient-to-b from-prd-grad-from to-prd-grad-to rounded-[40px] shadow">
           <div className="card-body">
             <svg
               className="w-10 h-10 text-white dark:text-white rounded-none"

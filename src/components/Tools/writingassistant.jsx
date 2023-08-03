@@ -1,6 +1,6 @@
 "use client";
 import { ToolHeader } from "components/Navbar";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import React from "react";
 import dynamic from "next/dynamic";
 import WritingButton from "components/Items/writingbuttons";
@@ -15,6 +15,7 @@ const WritingAssistant = () => {
   const [outputText, setOutputText] = useState();
   const [count, setCount] = useState({ wordCount: 0, sentenceCount: 0 });
   const [showGrammarChecker, hideGrammarChecker] = useState(true);
+  const inputRef = useRef();
 
   const getCount = (text) => {
     const wordCount = text.trim().split(/\s+/).length;
@@ -27,21 +28,51 @@ const WritingAssistant = () => {
       .readText()
       .then((pastedText) => {
         setOriginalText(pastedText);
+        inputRef.current.value = pastedText;
         setCount(getCount(pastedText));
       })
       .catch((err) => console.log(err));
   };
 
+  const handleTextChanged = (e) => {
+    setOriginalText(inputRef.current.value);
+  }
+
   const handleClick = (option) => {
+    if (option !== 'Clear')
+      setStatus({option: option})
     let prt;
-    if (option === "Rephrase")
-      prt = `${originalText} \n Please ${option} the above sentences.`;
-    else if (option === "Clear") {
+    switch (option) {
+      case "Rephrase":
+        prt = `Paraphrase the paragraph below. Provides a middle ground between changing the input text and keeping its meaning. \n${originalText}`;
+        break;
+      case "Causal":
+        prt = `Paraphrase the paragraph below. Make the senteces in causal style and keeping it's meaning. \n${originalText}`;
+        break;
+      case "Formal":
+        prt = `Paraphrase the paragraph below. Rewrites ideas in a more sophisticated and professional way. Also, maintain the core idea. \n${originalText}`;
+        break;
+      case "Creative":
+        prt = `Paraphrase the paragraph below. Rephrases text with the most inventiveness and expression. Also, maintain the core idea. \n${originalText}`;
+        break;
+      case "Simple":
+        prt = `Paraphrase the paragraph below. Presents text in a way most people can understand. Also, maintain the core idea. \n${originalText}`;
+        break;
+      case "Expand":
+        prt = `Paraphrase the paragraph below. Adds more detail and depth in order to lengthen the text. Also, maintain the core idea. \n${originalText}`;
+        break;
+      case "Shorten":
+        prt = `Paraphrase the paragraph below. Conveys the meaning of a text with conciseness and clarity. Also, maintain the core idea. \n${originalText}`;
+        break;
+      default:
+        break;
+    }
+    if (option === "Clear") {
       setOriginalText(null);
       setInputText(null);
+      inputRef.current.value = '';
       return;
-    } else
-      prt = `${originalText} \n Please make the above sentences are ${option}`;
+    }
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/openai`, {
       method: "POST",
       headers: {
@@ -148,43 +179,50 @@ const WritingAssistant = () => {
                 </div>
                 <div className="mt-4 flex justify-center items-center w-full">
                   <div className="w-1/2 h-[28.56rem] border border-t-zinc-300 border-r-zinc-300">
-                    <div className="w-full h-full resize-none p-5 flex relative overflow-y-auto">
+                    <div className="w-full h-full resize-none flex relative overflow-y-auto">
+                      <textarea
+                        className="w-full h-full flex border-none justify-start items-center p-2 resize-none outline-none"
+                        placeholder={
+                          originalText
+                            ? ``
+                            : `To enhance your text use the tools above.`
+                        }
+                        onChange={handleTextChanged}
+                        ref={inputRef}
+                      />
                       {originalText ? (
-                        <div className="whitespace-pre-line">
-                          {originalText}
-                        </div>
+                        ""
                       ) : (
                         <>
-                          <div className="text-start text-gray-500">
+                          {/* <div className="text-start text-gray-500">
                             To enhance your text use the tools above.
-                          </div>
-                          <div className="absolute left-0 top-0 w-full h-full flex justify-center items-center">
-                            <div
-                              onClick={handlePaste}
-                              className="absolute hover:cursor-pointer btn normal-case hover:bg-prd-sub-grad-from bg-prd-sub-grad-from inline-flex justify-center items-center rounded-lg space-x-2"
+                          </div> */}
+                          <div
+                            onClick={handlePaste}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hover:cursor-pointer btn normal-case hover:bg-prd-sub-grad-from bg-prd-sub-grad-from inline-flex justify-center items-center rounded-lg space-x-2"
+                          >
+                            <svg
+                              width="18"
+                              height="22"
+                              viewBox="0 0 18 22"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
                             >
-                              <svg
-                                width="18"
-                                height="22"
-                                viewBox="0 0 18 22"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M16 20H2V4H4V7H14V4H16M9 2C9.26522 2 9.51957 2.10536 9.70711 2.29289C9.89464 2.48043 10 2.73478 10 3C10 3.26522 9.89464 3.51957 9.70711 3.70711C9.51957 3.89464 9.26522 4 9 4C8.73478 4 8.48043 3.89464 8.29289 3.70711C8.10536 3.51957 8 3.26522 8 3C8 2.73478 8.10536 2.48043 8.29289 2.29289C8.48043 2.10536 8.73478 2 9 2ZM16 2H11.82C11.4 0.84 10.3 0 9 0C7.7 0 6.6 0.84 6.18 2H2C1.46957 2 0.960859 2.21071 0.585786 2.58579C0.210714 2.96086 0 3.46957 0 4V20C0 20.5304 0.210714 21.0391 0.585786 21.4142C0.960859 21.7893 1.46957 22 2 22H16C16.5304 22 17.0391 21.7893 17.4142 21.4142C17.7893 21.0391 18 20.5304 18 20V4C18 3.46957 17.7893 2.96086 17.4142 2.58579C17.0391 2.21071 16.5304 2 16 2Z"
-                                  fill="white"
-                                />
-                              </svg>
-                              <span className="text-white">Paste Text</span>
-                            </div>
+                              <path
+                                d="M16 20H2V4H4V7H14V4H16M9 2C9.26522 2 9.51957 2.10536 9.70711 2.29289C9.89464 2.48043 10 2.73478 10 3C10 3.26522 9.89464 3.51957 9.70711 3.70711C9.51957 3.89464 9.26522 4 9 4C8.73478 4 8.48043 3.89464 8.29289 3.70711C8.10536 3.51957 8 3.26522 8 3C8 2.73478 8.10536 2.48043 8.29289 2.29289C8.48043 2.10536 8.73478 2 9 2ZM16 2H11.82C11.4 0.84 10.3 0 9 0C7.7 0 6.6 0.84 6.18 2H2C1.46957 2 0.960859 2.21071 0.585786 2.58579C0.210714 2.96086 0 3.46957 0 4V20C0 20.5304 0.210714 21.0391 0.585786 21.4142C0.960859 21.7893 1.46957 22 2 22H16C16.5304 22 17.0391 21.7893 17.4142 21.4142C17.7893 21.0391 18 20.5304 18 20V4C18 3.46957 17.7893 2.96086 17.4142 2.58579C17.0391 2.21071 16.5304 2 16 2Z"
+                                fill="white"
+                              />
+                            </svg>
+                            <span className="text-white">Paste Text</span>
                           </div>
                         </>
                       )}
                     </div>
                   </div>
                   <div className="w-1/2 h-[28.56rem] border border-t-zinc-300">
-                    <div className="w-full h-full resize-none py-5 overflow-y-auto">
-                      <MarkdownPreview source={inputText} />
+                    <div className="w-full h-full resize-none p-2 overflow-y-auto">
+                      <div className="whitespace-pre-line">{inputText}</div>
+                      {/* <MarkdownPreview source={inputText} /> */}
                     </div>
                   </div>
                 </div>
