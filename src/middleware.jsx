@@ -23,7 +23,7 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (!user && ['/subscription', '/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  if (!user && ['/subscription', '/summarizer', '/wassistant'].includes(req.nextUrl.pathname))
   {
     console.log("unauthorized");
     return NextResponse.redirect(new URL("/signin", req.url));
@@ -35,7 +35,7 @@ export async function middleware(req) {
     .eq('id', user?.id)
     .single()
 
-  if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant'].includes(req.nextUrl.pathname))
+  if (user && !profile?.subscription && ['/summarizer', '/verify', '/wassistant', '/signin', '/signup'].includes(req.nextUrl.pathname))
   {
     return NextResponse.redirect(new URL('/subscription', req.url));
   }
