@@ -31,7 +31,7 @@ const ChatBot = ({ uid }) => {
     getResponse();
   };
   const newConversation = () => {
-    router.push(`${window.origin}/chatbot`);
+    location.href=`${window.origin}/chatbot`;
   };
 
   const showHide = () => {
